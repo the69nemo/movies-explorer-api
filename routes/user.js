@@ -1,9 +1,14 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
-const { getMe, updateUser } = require('../controllers/user')
 
-router.get('/me', getMe);
+const {
+  validationIdUser,
+  validationUpdateUserInfo,
+} = require('../middlewares/requestValidation');
 
-router.patch('/me', updateUser);
+const { getMe, updateUser } = require('../controllers/user');
+
+router.get('/me', validationIdUser, getMe);
+
+router.patch('/me', validationUpdateUserInfo, updateUser);
 
 module.exports = router;

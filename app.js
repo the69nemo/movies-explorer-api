@@ -23,6 +23,7 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', () => {
 });
 
 app.use('/users', require('./routes/user'));
+app.use('/movie', require('./routes/movie'));
 
 app.use(errorLogger);
 

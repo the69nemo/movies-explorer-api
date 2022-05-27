@@ -6,6 +6,9 @@ const { celebrate, errors, Joi } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
 
+const handleError = require('./middlewares/handleError');
+const NotFoundErr = require('./errors/NotFoundErr');
+
 require('dotenv').config();
 
 const { PORT = 3000 } = process.env;
@@ -19,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb', () => {
   console.log('**********Подключено к Базе yf **********');
 });
 
-// app.use('/users', require('./'))
+app.use('/users', require('./routes/user'));
 
 app.use(errorLogger);
 

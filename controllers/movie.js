@@ -29,7 +29,7 @@ module.exports.createMovie = (req, res, next) => {
     nameEN,
   } = req.body;
   const owner = req.user._id;
-  Movie.create(
+  Movie.create({
     country,
     director,
     duration,
@@ -42,8 +42,8 @@ module.exports.createMovie = (req, res, next) => {
     owner,
     nameRU,
     nameEN,
-  )
-    .then((movie) => res.send({ movie }))
+  })
+    .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new NotValidErr('Переданны некорректные данные'));
@@ -57,9 +57,9 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .then((movie) => {
       if (!movie) {
-        next(new NotFoundErr('Фильм не найден'));
+        throw new NotFoundErr('Фильм не найден');
       } else if (String(movie.owner) === req.user._id) {
-        Movie.findByIdAndRemove(req.params.cardId)
+        Movie.findByIdAndRemove(req.params.movieId)
           .then(() => res.send({ message: 'Фильм успешно удален' }))
           .catch(() => next(new NotFoundErr('Фильм не найден')));
       } else {

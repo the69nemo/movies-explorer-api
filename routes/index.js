@@ -15,7 +15,7 @@ router.post('/signin', validationLogin, login);
 router.use(auth);
 
 router.use('/users', require('./user'));
-router.use('/movie', require('./movie'));
+router.use('/movies', require('./movie'));
 
 router.use((req, res, next) => {
   next(new NotFoundErr('Запрашиемый ресур не найден'));

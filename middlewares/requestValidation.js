@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const isUrl = require('validator/lib/isURL');
 
 module.exports.validationIdUser = celebrate({
   params: Joi.object().keys({
@@ -28,9 +29,24 @@ module.exports.validationMovieInfo = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().pattern(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/).required(),
-    trailerLink: Joi.string().pattern(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/).required(),
-    thumbnail: Joi.string().pattern(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/).required(),
+    image: Joi.string().custom((value, helpers) => {
+      if (isUrl(value)) {
+        return value;
+      }
+      return helpers.message('Поле image заполнено неверно');
+    }).required(),
+    trailerLink: Joi.string().custom((value, helpers) => {
+      if (isUrl(value)) {
+        return value;
+      }
+      return helpers.message('Поле trailerLink заполнено неверно');
+    }).required(),
+    thumbnail: Joi.string().custom((value, helpers) => {
+      if (isUrl(value)) {
+        return value;
+      }
+      return helpers.message('Поле thumbnail заполнено неверно');
+    }).required(),
     owner: Joi.string().length(24).hex(),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),

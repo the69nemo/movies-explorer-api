@@ -3,10 +3,7 @@ const NotAuthErr = require('../errors/NotAuthErr');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-// eslint-disable-next-line arrow-body-style
-const extractToken = (header) => {
-  return header.replace('Bearer ', '');
-};
+const extractToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;

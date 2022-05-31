@@ -1,21 +1,18 @@
 const router = require('express').Router();
 
-const {
-  validationUserInfo,
-  validationLogin,
-} = require('../middlewares/requestValidation');
-
-const { createNewUser, login } = require('../controllers/user');
+const NotAuthRoutes = require('./notAuthRoutes');
 const auth = require('../middlewares/auth');
+const Users = require('./user');
+const Movies = require('./movie');
+
 const { NotFoundErr } = require('../errors');
 
-router.post('/signup', validationUserInfo, createNewUser);
-router.post('/signin', validationLogin, login);
+router.use(NotAuthRoutes);
 
 router.use(auth);
 
-router.use('/users', require('./user'));
-router.use('/movies', require('./movie'));
+router.use(Users);
+router.use(Movies);
 
 router.use((req, res, next) => {
   next(new NotFoundErr('Запрашиемый ресур не найден'));

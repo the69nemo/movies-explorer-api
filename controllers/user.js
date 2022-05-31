@@ -23,13 +23,7 @@ module.exports.getMe = (req, res, next) => {
         });
       }
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new NotValidErr('Переданны некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
+    .catch((err) => next(err));
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -52,7 +46,9 @@ module.exports.updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new NotValidErr('Переданны некорректные данные для поиска'));
+        next(new NotValidErr('Переданны некорректные данные'));
+      } else if (err.code === 11000) {
+        next(new NotRepetitionErr('Такая почта уже зарегистрирована'));
       } else {
         next(err);
       }
@@ -64,31 +60,28 @@ module.exports.createNewUser = (req, res, next) => {
     name, email, password,
   } = req.body;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new NotRepetitionErr('Такая почта уже зарегистрирована');
-      }
-      return bcrypt.hash(password, 10);
-    })
+  bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
       email,
       password: hash,
-    }))
-    .then((data) => {
-      res.status(200).send({
-        name: data.name,
-        email: data.email,
-      });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new NotValidErr('Переданны некорректные данные'));
-      } else {
-        next(err);
-      }
-    });
+      .then((data) => {
+        res.status(200).send({
+          name: data.name,
+          email: data.email,
+        });
+      })
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new NotValidErr('Переданны некорректные данные'));
+        } else if (err.code === 11000) {
+          next(new NotRepetitionErr('Такая почта уже зарегистрирована'));
+        } else {
+          next(err);
+        }
+      }))
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {

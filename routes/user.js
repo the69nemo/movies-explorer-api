@@ -1,4 +1,4 @@
-const router = require('express').Router();
+const Users = require('express').Router();
 
 const {
   validationIdUser,
@@ -7,8 +7,8 @@ const {
 
 const { getMe, updateUser } = require('../controllers/user');
 
-router.get('/me', validationIdUser, getMe);
+Users.get('/users/me', validationIdUser, getMe);
 
-router.patch('/me', validationUpdateUserInfo, updateUser);
+Users.patch('/users/me', validationUpdateUserInfo, updateUser);
 
-module.exports = router;
+module.exports = Users;
